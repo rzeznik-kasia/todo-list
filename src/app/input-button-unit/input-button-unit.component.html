@@ -1,1 +1,7 @@
-<p>input-button-unit works! The title is: {{ title }}</p>
+<input class="todo-input"s #inputElementRef
+[value]="title"
+(keyup.enter)="submitValue($event.target.value)">
+
+<button class="btn" (click)="submitValue(inputElementRef.value)">
+Save
+</button>
