@@ -1,3 +1,5 @@
+App available throuhg: https://rzeznik-kasia.github.io/todo-list/
+
 # TodoList
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.6.
