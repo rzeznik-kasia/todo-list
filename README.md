@@ -1,4 +1,4 @@
-App available throuhg: https://rzeznik-kasia.github.io/todo-list/
+App available through: https://rzeznik-kasia.github.io/todo-list/
 
 # TodoList
 
