@@ -22,7 +22,7 @@ export class ListManagerComponent {
     this.todoListService.deleteItem(item);
   }
 
-  // updateItem(item, changes) {
-  //   this.todoListService.updateItem(item, changes);
-  // }
+  updateItem(item: TodoItem, changes: Partial<TodoItem>) {
+    this.todoListService.updateItem(item, changes);
+  }
 }

@@ -60,11 +60,11 @@ export class TodoListService {
     this.todoItemModifiedSubject.next(deletedTodoItem);
   }
 
-  // updateItem(item, changes) {
-  //   const index = this.todoListItems$.indexOf(item);
-  //   this.todoListItems$[index] = { ...item, ...changes };
-  //   this.saveList();
-  // }
+  updateItem(item: TodoItem, changes: Partial<TodoItem>) {
+      const updatedItem = { ...item, ...changes };
+      updatedItem.status = StatusCode.Updated;
+      this.todoItemModifiedSubject.next(updatedItem);
+  }
 
   modifyTodoList(todoItems: TodoItem[], todoItem: TodoItem): TodoItem[] {
     if (todoItem.status === StatusCode.Added) {
@@ -76,6 +76,11 @@ export class TodoListService {
     if (todoItem.status === StatusCode.Deleted) {
       return todoItems.filter(item => item.id !== todoItem.id);
     }
+    if (todoItem.status === StatusCode.Updated) {
+      return todoItems.map(item => item.id === todoItem.id ?
+        { ...todoItem, status: StatusCode.Unchanged } : item);
+    }
+
   }
 
 }
