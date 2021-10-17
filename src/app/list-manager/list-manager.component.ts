@@ -10,17 +10,17 @@ import { TodoListService } from '../services/todo-list.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListManagerComponent {
-  public todoListItems$: Observable<TodoItem[]> = this.todoListService.todoListItems$;
+  public todoListItems$: Observable<TodoItem[]> = this.todoListService.todoListItemsWithCRUD$;
 
   constructor(private todoListService: TodoListService) {}
 
-  // addItem(title: string) {
-  //   this.todoListService.addItem({ title });
-  // }
+  addItem(title: string) {
+    this.todoListService.addItem({ title });
+  }
 
-  // removeItem(item) {
-  //   this.todoListService.deleteItem(item);
-  // }
+  removeItem(item: TodoItem) {
+    this.todoListService.deleteItem(item);
+  }
 
   // updateItem(item, changes) {
   //   this.todoListService.updateItem(item, changes);
