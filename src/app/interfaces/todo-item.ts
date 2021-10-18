@@ -3,11 +3,4 @@ export interface TodoItem {
   completed?: boolean;
 
   id?: number;
-  status?: StatusCode;
-}
-
-export enum StatusCode {
-  Added,
-  Deleted,
-  Updated
 }

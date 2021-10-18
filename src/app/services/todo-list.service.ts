@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { merge, Observable, Subject } from 'rxjs';
 import { scan } from 'rxjs/operators';
-import { StatusCode, TodoItem } from '../interfaces/todo-item';
-// import { StorageService } from './storage.service';
+import { StatusCode } from '../enums/status-code';
+import { TodoItem } from '../interfaces/todo-item';
+import { TodoItemsModifyOperation } from '../interfaces/todo-items-modify-operation-interface';
 
+// import { StorageService } from './storage.service';
 // const todoListStorageKey = 'Todo_List_Observable';
-interface TodoItemsModifyOperationInterface {
-  todoItem: TodoItem,
-  status: StatusCode
-}
 @Injectable({
   providedIn: 'root'
 })
@@ -36,31 +34,31 @@ export class TodoListService {
   //   this.storageService.setData(todoListStorageKey, this.todoListItems$);
   // }
 
-  private todoItemModifiedSubject = new Subject<TodoItemsModifyOperationInterface>();
-  todoItemModifiedAction$ = this.todoItemModifiedSubject.asObservable();
+  private todoItemsModifyOperationSubject = new Subject<TodoItemsModifyOperation>();
+  todoItemsModifyOperationAction$ = this.todoItemsModifyOperationSubject.asObservable();
 
   todoListItemsWithCRUD$ = merge(
     this.todoListItems$,
-    this.todoItemModifiedAction$
+    this.todoItemsModifyOperationAction$
     )
   .pipe(
-    scan((todoItems: TodoItem[], operation: TodoItemsModifyOperationInterface) => this.modifyTodoList(todoItems, operation.todoItem, operation.status)),
+    scan((todoItems: TodoItem[], operation: TodoItemsModifyOperation) => this.modifyTodoList(todoItems, operation.todoItem, operation.status)),
   );
 
   addItem(item: TodoItem) {
     const addedTodoItem = { ...item };
     addedTodoItem.id = Date.now(); //TODO
-    this.todoItemModifiedSubject.next({todoItem: addedTodoItem, status: StatusCode.Added});
+    this.todoItemsModifyOperationSubject.next({todoItem: addedTodoItem, status: StatusCode.Added});
   }
 
   deleteItem(item: TodoItem) {
     const deletedTodoItem = { ...item };
-    this.todoItemModifiedSubject.next({todoItem: deletedTodoItem, status: StatusCode.Deleted});
+    this.todoItemsModifyOperationSubject.next({todoItem: deletedTodoItem, status: StatusCode.Deleted});
   }
 
   updateItem(item: TodoItem, changes: Partial<TodoItem>) {
     const updatedTodoItem = { ...item, ...changes };
-    this.todoItemModifiedSubject.next({todoItem: updatedTodoItem, status: StatusCode.Updated});
+    this.todoItemsModifyOperationSubject.next({todoItem: updatedTodoItem, status: StatusCode.Updated});
   }
 
   modifyTodoList(todoItems: readonly TodoItem[], todoItem: TodoItem, status: StatusCode): TodoItem[] {
