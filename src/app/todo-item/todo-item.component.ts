@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { TodoItem } from '../interfaces/todo-item';
 
 @Component({
   selector: 'app-todo-item',
   templateUrl: './todo-item.component.html',
-  styleUrls: ['./todo-item.component.css']
+  styleUrls: ['./todo-item.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoItemComponent {
   @Input() item: TodoItem;
@@ -18,8 +19,7 @@ export class TodoItemComponent {
   completeItem() {
     this.update.emit({
       item: this.item,
-      changes: {completed: !this.item.completed}
+      changes: { completed: !this.item.completed }
     });
   }
-
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { merge, Observable, Subject } from 'rxjs';
-import { scan, tap } from 'rxjs/operators';
+import { scan } from 'rxjs/operators';
 import { StatusCode, TodoItem } from '../interfaces/todo-item';
 // import { StorageService } from './storage.service';
 
@@ -11,10 +11,7 @@ import { StatusCode, TodoItem } from '../interfaces/todo-item';
 })
 export class TodoListService {
 
-  todoListItems$: Observable<TodoItem[]> = this.fetchData().pipe(
-    tap(data => console.log('todos', JSON.stringify(data)))
-  );
-
+  todoListItems$: Observable<TodoItem[]> = this.fetchData();
   //storageService.getData(todoListStorageKey) || defaultTodoList;
        
   fetchData(): Observable<TodoItem[]> {
@@ -49,9 +46,10 @@ export class TodoListService {
   );
 
   addItem(item: TodoItem) {
-    item.status = StatusCode.Added;
-    item.id = Date.now();
-    this.todoItemModifiedSubject.next(item);
+    const addedTodoItem = { ...item };
+    addedTodoItem.status = StatusCode.Added;
+    addedTodoItem.id = Date.now();
+    this.todoItemModifiedSubject.next(addedTodoItem);
   }
 
   deleteItem(item: TodoItem) {
@@ -61,26 +59,28 @@ export class TodoListService {
   }
 
   updateItem(item: TodoItem, changes: Partial<TodoItem>) {
-      const updatedItem = { ...item, ...changes };
-      updatedItem.status = StatusCode.Updated;
-      this.todoItemModifiedSubject.next(updatedItem);
+    const updatedTodoItem = { ...item, ...changes };
+    updatedTodoItem.status = StatusCode.Updated;
+    this.todoItemModifiedSubject.next(updatedTodoItem);
   }
 
-  modifyTodoList(todoItems: TodoItem[], todoItem: TodoItem): TodoItem[] {
+  modifyTodoList(todoItems: readonly TodoItem[], todoItem: TodoItem): TodoItem[] {
     if (todoItem.status === StatusCode.Added) {
       return [
         ...todoItems,
         { ...todoItem, status: StatusCode.Unchanged }
       ];
     }
+
     if (todoItem.status === StatusCode.Deleted) {
       return todoItems.filter(item => item.id !== todoItem.id);
     }
+
     if (todoItem.status === StatusCode.Updated) {
       return todoItems.map(item => item.id === todoItem.id ?
         { ...todoItem, status: StatusCode.Unchanged } : item);
     }
 
   }
-
+  }
 }
