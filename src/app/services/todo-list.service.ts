@@ -5,7 +5,10 @@ import { StatusCode, TodoItem } from '../interfaces/todo-item';
 // import { StorageService } from './storage.service';
 
 // const todoListStorageKey = 'Todo_List_Observable';
-
+interface TodoItemsModifyOperationInterface {
+  todoItem: TodoItem,
+  status: StatusCode
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -33,8 +36,7 @@ export class TodoListService {
   //   this.storageService.setData(todoListStorageKey, this.todoListItems$);
   // }
 
-
-  private todoItemModifiedSubject = new Subject<TodoItem>();
+  private todoItemModifiedSubject = new Subject<TodoItemsModifyOperationInterface>();
   todoItemModifiedAction$ = this.todoItemModifiedSubject.asObservable();
 
   todoListItemsWithCRUD$ = merge(
@@ -42,45 +44,36 @@ export class TodoListService {
     this.todoItemModifiedAction$
     )
   .pipe(
-    scan((todoItems: TodoItem[], todoItem: TodoItem) => this.modifyTodoList(todoItems, todoItem)),
+    scan((todoItems: TodoItem[], operation: TodoItemsModifyOperationInterface) => this.modifyTodoList(todoItems, operation.todoItem, operation.status)),
   );
 
   addItem(item: TodoItem) {
     const addedTodoItem = { ...item };
-    addedTodoItem.status = StatusCode.Added;
-    addedTodoItem.id = Date.now();
-    this.todoItemModifiedSubject.next(addedTodoItem);
+    addedTodoItem.id = Date.now(); //TODO
+    this.todoItemModifiedSubject.next({todoItem: addedTodoItem, status: StatusCode.Added});
   }
 
   deleteItem(item: TodoItem) {
     const deletedTodoItem = { ...item };
-    deletedTodoItem.status = StatusCode.Deleted;
-    this.todoItemModifiedSubject.next(deletedTodoItem);
+    this.todoItemModifiedSubject.next({todoItem: deletedTodoItem, status: StatusCode.Deleted});
   }
 
   updateItem(item: TodoItem, changes: Partial<TodoItem>) {
     const updatedTodoItem = { ...item, ...changes };
-    updatedTodoItem.status = StatusCode.Updated;
-    this.todoItemModifiedSubject.next(updatedTodoItem);
+    this.todoItemModifiedSubject.next({todoItem: updatedTodoItem, status: StatusCode.Updated});
   }
 
-  modifyTodoList(todoItems: readonly TodoItem[], todoItem: TodoItem): TodoItem[] {
-    if (todoItem.status === StatusCode.Added) {
-      return [
-        ...todoItems,
-        { ...todoItem, status: StatusCode.Unchanged }
-      ];
+  modifyTodoList(todoItems: readonly TodoItem[], todoItem: TodoItem, status: StatusCode): TodoItem[] {
+    if (status === StatusCode.Added) {
+      return [ ...todoItems, { ...todoItem }];
     }
 
-    if (todoItem.status === StatusCode.Deleted) {
+    if (status === StatusCode.Deleted) {
       return todoItems.filter(item => item.id !== todoItem.id);
     }
 
-    if (todoItem.status === StatusCode.Updated) {
-      return todoItems.map(item => item.id === todoItem.id ?
-        { ...todoItem, status: StatusCode.Unchanged } : item);
+    if (status === StatusCode.Updated) {
+      return todoItems.map(item => item.id === todoItem.id ? { ...todoItem} : item);
     }
-
-  }
   }
 }
