@@ -1,6 +1,6 @@
-App available through: https://rzeznik-kasia.github.io/todo-list/
+App available through: **https://rzeznik-kasia.github.io/todo-list/**
 
-App was created during online workshops ng-girls. In this workshop I participate as a mentor. It was created acording to this tutorial: https://ng-girls.gitbook.io/todo-list-tutorial/, 
+App was created during online workshops **ng-girls** (https://workshops.ng-girls.org/angular-online2019/#about). In this workshop I participate as a **mentor**. It was created acording to this tutorial: https://ng-girls.gitbook.io/todo-list-tutorial/, then refactored by me to be more **reactive**
 
 To deploy app to gh-pages (https://medium.com/tech-insights/how-to-deploy-angular-apps-to-github-pages-gh-pages-896c4e10f9b4):
 1) npm i angular-cli-ghpages --save-dev
